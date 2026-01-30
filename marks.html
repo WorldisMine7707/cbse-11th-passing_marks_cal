@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Class 11 Pass Calculator | CBSE</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2ff;
+      padding: 30px;
+    }
+    .box {
+      max-width: 420px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    h2 {
+      text-align: center;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+    }
+    button {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+    small {
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Class 11 Final Marks Calculator</h2>
+  <p style="text-align:center">CBSE / Kendriya Vidyalaya</p>
+
+  <input type="text" id="name" placeholder="Your Name">
+  <input type="text" id="subject" placeholder="Subject (Physics / Chem / Maths)">
+
+  <select id="goal">
+    <option value="pass">Just want to pass 😮‍💨</option>
+    <option value="safe">Want a safe pass 🙂</option>
+    <option value="strong">Want to feel confident 💪</option>
+  </select>
+
+  <input type="number" id="pt1" placeholder="PT-1 marks (out of 40)">
+  <input type="number" id="hy" placeholder="Half Yearly marks (out of 70)">
+  <input type="number" id="pt2" placeholder="PT-2 marks (out of 40)">
+
+  <button onclick="calculate()">Calculate</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+function calculate() {
+  let name = document.getElementById("name").value || "Friend";
+  let subject = document.getElementById("subject").value || "this subject";
+  let goal = document.getElementById("goal").value;
+
+  let pt1 = Number(document.getElementById("pt1").value);
+  let pt2 = Number(document.getElementById("pt2").value);
+  let hy = Number(document.getElementById("hy").value);
+
+  // Convert to /100
+  let pt1_100 = (pt1 / 40) * 100;
+  let pt2_100 = (pt2 / 40) * 100;
+  let hy_100 = (hy / 70) * 100;
+
+  // Weightage
+  let internal = (pt1_100 * 0.10) + (pt2_100 * 0.10) + (hy_100 * 0.30);
+
+  // Required from final
+  let needed50 = 33 - internal;
+  let needed70 = needed50 * 1.4;
+
+  let finalNeeded = Math.max(needed70, 23);
+  finalNeeded = Math.ceil(finalNeeded);
+
+  let safeTarget = finalNeeded + 5;
+
+  let msg = `Hi <b>${name}</b> 👋<br>`;
+  msg += `For <b>${subject}</b>:<br><br>`;
+
+  if (finalNeeded <= 0) {
+    msg += `✅ You are already safe overall.<br>
+            Still score at least <b>23</b> in Final.`;
+  } else if (finalNeeded > 70) {
+    msg += `❌ Even full marks won’t be enough.<br>
+            Talk to your teacher early.`;
+  } else {
+    msg += `👉 You need <b>${finalNeeded}</b> marks out of 70 to PASS.<br>`;
+    msg += `🟢 Safe target: <b>${safeTarget}</b>+ marks.<br><br>`;
+  }
+
+  if (goal === "pass") {
+    msg += "You don’t need perfection. Just clear the line.";
+  } else if (goal === "safe") {
+    msg += "A little extra effort = zero tension later.";
+  } else {
+    msg += "You’re capable of more than you think 💪";
+  }
+
+  msg += `<br><br><small>Made by YASH 💙</small>`;
+
+  document.getElementById("result").innerHTML = msg;
+}
+</script>
+
+</body>
+</html>
