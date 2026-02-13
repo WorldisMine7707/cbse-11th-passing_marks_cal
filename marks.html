@@ -1,126 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Class 11 Pass Calculator | CBSE</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KV Manesar Student Platform</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #eef2ff;
-      padding: 30px;
-    }
-    .box {
-      max-width: 420px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-    }
-    h2 {
-      text-align: center;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-    }
-    button {
-      background: #4f46e5;
-      color: white;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 6px;
-    }
-    .result {
-      margin-top: 15px;
-      font-weight: bold;
-      line-height: 1.5;
-    }
-    small {
-      color: #555;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f3f5ff; }
+    .container { max-width: 1100px; margin: 20px auto; padding: 0 16px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px,1fr)); gap: 12px; }
+    input, select, textarea, button { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #cbd5e1; border-radius: 8px; }
+    button { background: #4338ca; color: white; border: none; cursor: pointer; }
+    .secondary { background: #334155; }
+    .danger { background: #b91c1c; }
+    .small { width: auto; padding: 6px 8px; font-size: 12px; }
+    .hidden { display: none !important; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tabs button { width: auto; }
+    .muted { color: #6b7280; font-size: 13px; }
+    .disclaimer { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+    .item { border: 1px solid #e5e7eb; padding: 10px; border-radius: 8px; margin-top: 8px; }
+    .ok { color: #166534; font-weight: bold; }
+    .err { color: #991b1b; font-weight: bold; }
   </style>
 </head>
 <body>
+<div class="container">
+  <div class="card disclaimer"><b>Disclaimer:</b> Independent student platform for Kendriya Vidyalaya Manesar. Not officially affiliated with Kendriya Vidyalaya Sangathan. Access is restricted to Class 8 and above.</div>
 
-<div class="box">
-  <h2>Class 11 Final Marks Calculator</h2>
-  <p style="text-align:center">CBSE / Kendriya Vidyalaya</p>
+  <section id="auth" class="grid">
+    <div class="card">
+      <h3>Register</h3>
+      <input id="r_name" placeholder="Name">
+      <input id="r_class" type="number" min="8" placeholder="Class (8+)" />
+      <input id="r_section" placeholder="Section">
+      <input id="r_dob" type="date">
+      <input id="r_email" type="email" placeholder="Email">
+      <input id="r_pass" type="password" placeholder="Password">
+      <button onclick="startReg()">Send Email Verification</button>
+      <input id="r_code" placeholder="Verification code">
+      <button onclick="verifyReg()">Verify & Create Account</button>
+      <div id="regMsg" class="muted"></div>
+    </div>
+    <div class="card">
+      <h3>Login</h3>
+      <input id="l_email" type="email" placeholder="Email">
+      <input id="l_pass" type="password" placeholder="Password">
+      <button onclick="login()">Login</button>
+      <div id="loginMsg" class="muted"></div>
+      <p class="muted">Admin test account: admin@kvmanesar.local / Admin@123</p>
+    </div>
+  </section>
 
-  <input type="text" id="name" placeholder="Your Name">
-  <input type="text" id="subject" placeholder="Subject (Physics / Chem / Maths)">
+  <section id="dash" class="hidden">
+    <div class="card" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
+      <div><h2 style="margin:0">KV Manesar Student Platform</h2><div id="welcome" class="muted"></div></div>
+      <button class="secondary" style="width:auto" onclick="logout()">Logout</button>
+    </div>
+    <div class="card tabs">
+      <button onclick="tab('chat')">School Chat</button>
+      <button onclick="tab('upload')">Content Upload</button>
+      <button onclick="tab('library')">Content Library</button>
+      <button onclick="tab('profile')">Profile</button>
+      <button onclick="tab('reports')">Report Center</button>
+      <button id="adminBtn" class="hidden" onclick="tab('admin')">Admin Panel</button>
+    </div>
 
-  <select id="goal">
-    <option value="pass">Just want to pass 😮‍💨</option>
-    <option value="safe">Want a safe pass 🙂</option>
-    <option value="strong">Want to feel confident 💪</option>
-  </select>
+    <div id="chat" class="card">
+      <h3>School-wide Chat</h3>
+      <textarea id="chatText" placeholder="Write message"></textarea>
+      <button onclick="sendMessage()">Send</button>
+      <div id="chatList"></div>
+    </div>
 
-  <input type="number" id="pt1" placeholder="PT-1 marks (out of 40)">
-  <input type="number" id="hy" placeholder="Half Yearly marks (out of 70)">
-  <input type="number" id="pt2" placeholder="PT-2 marks (out of 40)">
+    <div id="upload" class="card hidden">
+      <h3>Upload Educational Files</h3>
+      <p class="muted">Allowed: PDF, DOC, DOCX | Max: 5MB</p>
+      <input id="fileTitle" placeholder="Title" />
+      <input id="fileInput" type="file" accept=".pdf,.doc,.docx" />
+      <button onclick="uploadFile()">Upload</button>
+      <div id="uploadMsg" class="muted"></div>
+    </div>
 
-  <button onclick="calculate()">Calculate</button>
-
-  <div class="result" id="result"></div>
+    <div id="library" class="card hidden"><h3>Content Library</h3><div id="filesList"></div></div>
+    <div id="profile" class="card hidden"><h3>Profile</h3><div id="profileBox"></div></div>
+    <div id="reports" class="card hidden"><h3>Report Center</h3><div id="myReports"></div></div>
+    <div id="admin" class="card hidden"><h3>Admin Moderation Panel</h3><div id="adminBox"></div></div>
+  </section>
 </div>
 
 <script>
-function calculate() {
-  let name = document.getElementById("name").value || "Friend";
-  let subject = document.getElementById("subject").value || "this subject";
-  let goal = document.getElementById("goal").value;
+let token = localStorage.getItem('kv_token') || '';
+let me = null;
 
-  let pt1 = Number(document.getElementById("pt1").value);
-  let pt2 = Number(document.getElementById("pt2").value);
-  let hy = Number(document.getElementById("hy").value);
-
-  // Convert to /100
-  let pt1_100 = (pt1 / 40) * 100;
-  let pt2_100 = (pt2 / 40) * 100;
-  let hy_100 = (hy / 70) * 100;
-
-  // Weightage
-  let internal = (pt1_100 * 0.10) + (pt2_100 * 0.10) + (hy_100 * 0.30);
-
-  // Required from final
-  let needed50 = 33 - internal;
-  let needed70 = needed50 * 1.4;
-
-  let finalNeeded = Math.max(needed70, 23);
-  finalNeeded = Math.ceil(finalNeeded);
-
-  let safeTarget = finalNeeded + 5;
-
-  let msg = `Hi <b>${name}</b> 👋<br>`;
-  msg += `For <b>${subject}</b>:<br><br>`;
-
-  if (finalNeeded <= 0) {
-    msg += `✅ You are already safe overall.<br>
-            Still score at least <b>23</b> in Final.`;
-  } else if (finalNeeded > 70) {
-    msg += `❌ Even full marks won’t be enough.<br>
-            Talk to your teacher early.`;
-  } else {
-    msg += `👉 You need <b>${finalNeeded}</b> marks out of 70 to PASS.<br>`;
-    msg += `🟢 Safe target: <b>${safeTarget}</b>+ marks.<br><br>`;
-  }
-
-  if (goal === "pass") {
-    msg += "You don’t need perfection. Just clear the line.";
-  } else if (goal === "safe") {
-    msg += "A little extra effort = zero tension later.";
-  } else {
-    msg += "You’re capable of more than you think 💪";
-  }
-
-  msg += `<br><br><small>Made by YASH 💙</small>`;
-
-  document.getElementById("result").innerHTML = msg;
+async function api(path, options={}) {
+  options.headers = options.headers || {};
+  if (token) options.headers['Authorization'] = `Bearer ${token}`;
+  const r = await fetch(path, options);
+  const data = await r.json().catch(()=>({}));
+  if (!r.ok) throw new Error(data.error || 'Request failed');
+  return data;
 }
-</script>
 
+function show(id, msg, err=false){ const e=document.getElementById(id); e.textContent=msg; e.className=err?'err':'ok'; }
+
+async function startReg(){
+  try {
+    const out = await api('/api/register/init', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      name:v('r_name'), classLevel:Number(v('r_class')), section:v('r_section'), dob:v('r_dob'), email:v('r_email'), password:v('r_pass')
+    })});
+    show('regMsg', `Verification code sent. Demo code: ${out.devCode}`);
+  } catch(e){ show('regMsg', e.message, true); }
+}
+
+async function verifyReg(){
+  try {
+    const out = await api('/api/register/verify', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v('r_email'), code:v('r_code')})});
+    show('regMsg', `Account created. Username: ${out.username}`);
+  } catch(e){ show('regMsg', e.message, true); }
+}
+
+async function login(){
+  try {
+    const out = await api('/api/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:v('l_email'), password:v('l_pass')})});
+    token = out.token; localStorage.setItem('kv_token', token); await loadMe(); await refreshAll();
+  } catch(e){ show('loginMsg', e.message, true); }
+}
+
+async function logout(){
+  try { await api('/api/logout', {method:'POST'}); } catch(e){}
+  token=''; me=null; localStorage.removeItem('kv_token'); renderState();
+}
+
+async function loadMe(){ me = await api('/api/me'); renderState(); }
+
+function renderState(){
+  const inApp = !!me;
+  document.getElementById('auth').classList.toggle('hidden', inApp);
+  document.getElementById('dash').classList.toggle('hidden', !inApp);
+  if (!inApp) return;
+  document.getElementById('welcome').textContent = `${me.name} (@${me.username}) | ${me.badge} | ${me.status}`;
+  document.getElementById('adminBtn').classList.toggle('hidden', me.role !== 'admin');
+  document.getElementById('profileBox').innerHTML = `<p>Name: ${me.name}</p><p>Class: ${me.class}</p><p>Section: ${me.section}</p><p>Email: ${me.email}</p><p>Status: ${me.status}</p>`;
+}
+
+function tab(id){ ['chat','upload','library','profile','reports','admin'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id)); }
+function v(id){ return document.getElementById(id).value.trim(); }
+
+async function sendMessage(){
+  try { await api('/api/messages', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:v('chatText')})}); document.getElementById('chatText').value=''; await loadMessages(); }
+  catch(e){ alert(e.message); }
+}
+
+async function loadMessages(){
+  const msgs = await api('/api/messages');
+  document.getElementById('chatList').innerHTML = msgs.map(m=>`<div class='item'><b>@${m.username}</b> <span class='muted'>${new Date(m.timestamp).toLocaleString()}</span><p>${esc(m.content)}</p><div class='muted'>messageID: ${m.messageID} | reports: ${m.reportCount}${m.flagged?' | FLAGGED':''}</div><button class='small danger' onclick='reportItem("message",${m.messageID})'>Report</button></div>`).join('') || '<p class="muted">No messages yet.</p>';
+}
+
+async function uploadFile(){
+  const fd = new FormData(); fd.append('title', v('fileTitle')); fd.append('file', document.getElementById('fileInput').files[0]);
+  try { await api('/api/files/upload', {method:'POST', body:fd}); show('uploadMsg', 'Uploaded'); await loadFiles(); }
+  catch(e){ show('uploadMsg', e.message, true); }
+}
+
+async function loadFiles(){
+  const files = await api('/api/files');
+  document.getElementById('filesList').innerHTML = files.map(f=>`<div class='item'><b>${esc(f.title)}</b> <span class='muted'>@${f.username}</span><div class='muted'>fileID: ${f.fileID} | reports: ${f.reportCount}${f.flagged?' | FLAGGED':''}</div><a href='${f.fileURL}' download='${esc(f.fileName)}'>Download ${esc(f.fileName)}</a><br><button class='small danger' onclick='reportItem("file",${f.fileID})'>Report</button></div>`).join('') || '<p class="muted">No files yet.</p>';
+}
+
+async function reportItem(type,id){
+  const reason = prompt('Reason: Abuse/Spam/Harassment/Other','Spam'); if(!reason) return;
+  try { await api('/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({targetType:type,targetID:id,reason})}); await refreshAll(); }
+  catch(e){ alert(e.message); }
+}
+
+async function loadMyReports(){
+  const reps = await api('/api/reports/mine');
+  document.getElementById('myReports').innerHTML = reps.map(r=>`<div class='item'>reportID ${r.reportID} | ${r.targetType.toUpperCase()} #${r.targetID} | ${esc(r.reason)} | ${new Date(r.timestamp).toLocaleString()}</div>`).join('') || '<p class="muted">No reports.</p>';
+}
+
+async function loadAdmin(){
+  if (me.role !== 'admin') return;
+  const d = await api('/api/admin/overview');
+  const users = d.users.map(u=>`<div class='item'><b>${esc(u.name)}</b> (@${esc(u.username)}) | status: ${esc(u.status)} ${u.role!=='admin'?`<button class='small danger' onclick='adminAct("/api/admin/user/ban",{userID:${u.userID}})'>Ban</button>`:''}</div>`).join('');
+  const flagged = [...d.flaggedMessages.map(m=>`<div class='item'>Message #${m.messageID}<button class='small' onclick='adminAct("/api/admin/message/unflag",{messageID:${m.messageID}})'>Unflag</button><button class='small danger' onclick='adminAct("/api/admin/message/delete",{messageID:${m.messageID}})'>Delete</button></div>`), ...d.flaggedFiles.map(f=>`<div class='item'>File #${f.fileID}<button class='small danger' onclick='adminAct("/api/admin/file/delete",{fileID:${f.fileID}})'>Remove</button></div>`)].join('') || '<p class="muted">No flagged items</p>';
+  const reports = d.reports.map(r=>`<div class='item'>reportID ${r.reportID} | ${r.targetType} #${r.targetID} | ${esc(r.reason)}</div>`).join('');
+  document.getElementById('adminBox').innerHTML = `<h4>Reported items</h4>${reports}<h4>Flagged items</h4>${flagged}<h4>Users</h4>${users}`;
+}
+
+async function adminAct(path, payload){ await api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); await refreshAll(); }
+
+async function refreshAll(){ if(!me) return; await Promise.all([loadMessages(),loadFiles(),loadMyReports(),loadAdmin()]); }
+function esc(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+(async ()=>{
+  if (token) {
+    try { await loadMe(); await refreshAll(); } catch(e){ token=''; localStorage.removeItem('kv_token'); }
+  }
+  setInterval(()=>{ if(me) refreshAll(); }, 3000);
+})();
+</script>
 </body>
 </html>
